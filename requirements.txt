@@ -1,0 +1,16 @@
+ultralytics==8.3.0
+torch==2.2.0
+numpy
+pillow
+opencv-python-headless
+
+
+doubts:
+1. insted of 19 labes we are using 10 labes so for why we not going with the 10b over 19?
+2. if add the confidance rate what will be the result?
+can i test 10 images for now?
+when i get the exact 700 images for future?
+how many epos are used to trainthe model? 300--
+
+Archiv_-30_page_1.png
+

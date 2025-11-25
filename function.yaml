@@ -1,0 +1,81 @@
+apiVersion: "nuclio.io/v1"
+kind: Function
+metadata:
+  name: my-yolo-detector-v4
+  namespace: cvat
+  annotations:
+    nuclio.io/project-name: cvat
+    name: "YOLOv8 wiring model- Mindtech-1"
+    type: "detector"
+    framework: "ultralytics"
+  
+    spec: |
+     [
+        { "id": 0, "name": "Wire" },
+        { "id": 1, "name": "Wire_length" },
+        { "id": 2, "name": "Connector" },
+        { "id": 3, "name": "Wire_Coil/Protector" },
+        { "id": 4, "name": "Single_Networkloop" },
+        { "id": 5, "name": "Overall_Networkloop" },
+        { "id": 6, "name": "Juntion_point" },
+        { "id": 7, "name": "Table" },
+        { "id": 8, "name": "Text" },
+        { "id": 9, "name": "Actuator" },
+        { "id": 10, "name": "Cabin_Area" },
+        { "id": 11, "name": "Chassis_Area" },
+        { "id": 12, "name": "ECU" },
+        { "id": 13, "name": "Engine_Area" },
+        { "id": 14, "name": "Fuse" },
+        { "id": 15, "name": "Ground" },
+        { "id": 16, "name": "Power_Distribution" },
+        { "id": 17, "name": "Relay" },
+        { "id": 18, "name": "Splice" }
+      ]
+
+spec:
+  description: YOLOv8 detector for auto-annotation in CVAT
+  runtime: python:3.9
+  handler: main:infer
+  eventTimeout: 120s
+  readinessTimeoutSeconds: 120
+
+  build:
+    image: cvat/nuclio/my-yolo-detector-v4
+    baseImage: python:3.9
+    
+    directives:
+      preCopy:
+        - kind: USER
+          value: root
+        - kind: RUN
+          value: apt-get update && apt-get install -y libgl1 libglib2.0-0 libsm6 libxrender1 libxext6
+        - kind: WORKDIR
+          value: /opt/nuclio
+        - kind: RUN
+          value: pip install ultralytics opencv-python-headless numpy pillow
+
+  triggers:
+    myHttpTrigger:
+      maxWorkers: 1
+      kind: "http"
+      workerAvailabilityTimeoutMilliseconds: 10000
+      attributes:
+        maxRequestBodySize: 33554432 
+
+  # Mount the model file from your host machine
+  volumes:
+    - volume:
+        name: model-volume
+        hostPath:
+          path: /home/benni/Downloads/Internship/testdataset/cvat_ml/best.pt
+          type: File
+      volumeMount:
+        name: model-volume
+        mountPath: /opt/nuclio/best.pt
+
+  platform:
+    attributes:
+      restartPolicy:
+        name: always
+        maximumRetryCount: 3
+      mountMode: volume

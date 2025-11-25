@@ -1,0 +1,28 @@
+type: nuclio
+name: my-yolo-detector
+framework: yolo
+description: YOLOv8 detector deployed in Nuclio for technical drawing views
+version: 1.0
+
+# CVAT → Creates these labels automatically in tasks
+labels:
+  - id: 0
+    name: 2D_view
+  - id: 1
+    name: 3D_view
+  - id: 2
+    name: Exploded_view
+  - id: 3
+    name: Section_view
+  - id: 4
+    name: Text
+
+# The URL of your Nuclio function (localhost for local CVAT)
+url: http://localhost:8070/api/functions/my-yolo-detector/infer
+
+input:
+  type: image  
+
+output:
+  type: bboxes
+  format: [x1, y1, x2, y2]
