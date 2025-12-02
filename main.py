@@ -54,7 +54,6 @@ def infer(context, event):
         found_objects = []
         
         # --- CRITICAL FIX FOR OBB MODELS ---
-        # Check if the model returned OBB (Oriented) or standard Boxes
         if results.obb is not None:
             # It is an OBB model! Use the .obb property
             # .xyxy gives the horizontal box wrapping the rotated object (compatible with CVAT)
