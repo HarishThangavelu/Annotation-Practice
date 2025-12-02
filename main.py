@@ -14,7 +14,7 @@ def infer(context, event):
     # --- 1. BROWSER & HEALTH CHECK GUARD ---
     if event.method == 'GET' or not event.body:
         return context.Response(
-            body="Hey Harish! Function is UP and Running!",
+            body="Hey Function is UP and Running!",
             status_code=200
         )
 
